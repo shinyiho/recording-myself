@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Videos</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div class="photobooth">
+    <div class="control">
+      <div class="rgb">
+        <input type="range" min="0" max="255" value="128" id="rmin">
+        <label for="rmin">RED min</label>
+        <input type="range" min="0" max="255" value="128" id="rmax">
+        <label for="rmax">RED max</label>
+        <br>
+        <input type="range" min="0" max="255" value="128" id="gmin">
+        <label for="gmin">GREEN min</label>
+        <input type="range" min="0" max="255" value="128" id="gmax">
+        <label for="gmax">GREEN max</label>
+        <br>
+        <input type="range" min="0" max="255" value="128" id="bmin">
+        <label for="bmin">BLUE min</label>
+        <input type="range" min="0" max="255" value="128" id="bmax">
+				<label for="bmax">BLUE max</label>
+				<br>
+
+			</div>
+			<div class= "filter">
+				<button id="changeRGB">changeRGB</button>
+				<button id="shiftRGB">shiftRGB</button>
+				<button id="greenScreen">greenScreen</button>
+
+			</div>
+			<div class= "adjust">
+				<input type="range" min="0" max="20" value="0" id="blur">
+				<label for="blur">Blur</label>
+				<input type="range" min="0" max="700" value="200" id="brightness">
+				<label for="brightness">Brightness</label>
+				<input type="range" min="0" max="755" value="128" id="contrast">
+				<label for="contrast">Contrast</label>
+				<input type="range" min="0" max="955" value="128" id="saturation">
+				<label for="saturation">Saturation</label>
+					<br>
+				<input type="range" min="0" max="90" value="0" id="opacity">
+				<label for="opacity">Fade</label>
+				<input type="range" min="0" max="100" value="0" id="grascale">
+				<label for="grascale">GrayScale</label>
+				<input type="range" min="0" max="360" value="0" id="hueRotate">
+				<label for="hueRotate">Hue</label>
+				<input type="range" min="0" max="100" value="0" id="invert">
+				<label for="invert">Invert</label>
+					<br>
+				<input type="range" min="0" max="100" value="0" id="sepia">
+				<label for="sepia">Vintage</label>
+
+
+
+			</div>
+
+			<div class= "text">
+				<h3>Text</h3>
+				<textarea id="textarea" rows="4" cols="90"value="say something!">say something!</textarea><br>
+				<input type="range" min="10" max="160" value="20" id="fontsize">
+				<label for="fontsize">fontsize</label>
+					<div id="color-session">
+						<h3>Text Color</h3>
+						<input type="color" id="textColor" value="#ffffff">
+					</div>
+			</div>
+			<button id="save_pic" onclick="takePhoto()">Take a pic</button>
+			<button id="save_canvas">Start Rendering Mp4 & Webm</button>
+		</div>
+		<div class="display">
+    <video class="video" height="0px"></video>
+		<canvas class="canvas"></canvas>
+		</div>
+  </div>
+	<div class="gallery"></div>
+
+		<script src="recordCanvas.js"></script>
+			<!-- <script src="https://raw.githack.com/jnordberg/gif.js/master/dist/gif.js"></script> -->
+			<script src="https://raw.githack.com/rndme/download/master/download.js"></script>
+			<script src="./gif.worker.js"></script>
+					<script src="./gif.js"></script>
+
+
+  <script>
+    let video = document.querySelector(".video");
+    let canvas = document.querySelector(".canvas");
+    const ctx = canvas.getContext('2d');
+		let gallery = document.querySelector(".gallery");
+		let changeRGB = document.getElementById("changeRGB");
+		let shiftRGB = document.getElementById("shiftRGB");
+		let greenScreen = document.getElementById("greenScreen");
+		let blur = document.getElementById("blur")
+		let brightness = document.getElementById("brightness")
+		let contrast = document.getElementById("contrast")
+		let saturation = document.getElementById("saturation")
+		let opacity = document.getElementById("opacity")
+		let grascale = document.getElementById("grascale")
+		let hueRotate = document.getElementById("hueRotate")
+		let invert = document.getElementById("invert")
+		let sepia = document.getElementById("sepia")
+
+
+
+
+		let textarea = document.getElementById("textarea");
+		let fontsize = document.getElementById("fontsize")
+		let textColor = document.getElementById("textColor")
+		let fshiftRGB = (pixels) => {
+				for (let j = 0; j < pixels.data.length; j += 4) {
+					pixels.data[j - 159] = pixels.data[j];
+					pixels.data[j + 500] = pixels.data[j + 1];
+					pixels.data[j - 350] = pixels.data[j + 2];
+				}
+				return pixels;
+			}
+		let filter=fshiftRGB
+		// let input =
+		changeRGB.addEventListener("click",()=>{filter = fchangeRGB});
+		shiftRGB.addEventListener("click", () => { filter = fshiftRGB });
+		greenScreen.addEventListener("click", () => { filter = fgreenScreen });
+
+    function getVideo() {
+      navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+        .then(localMediaStream => {
+          // console.log(localMediaStream);
+          // video.src = window.URL.createObjectURL(localMediaStream);
+          video.srcObject = localMediaStream;
+          video.play();
+        })
+        .catch(err => {
+          console.log(`Something wrong happened!`, err);
+        })
+    }
+	function wrapText(text, x, y, maxWidth, fontSize) {
+		var firstY = y;
+		var words = text.split(' ');
+		var line = '';
+		var lineHeight = fontSize * 1.286; // a good approx for 10-18px sizes
+
+		ctx.textBaseline = 'top';
+
+		for (var n = 0; n < words.length; n++) {
+			var testLine = line + words[n] + ' ';
+			var metrics = ctx.measureText(testLine);
+			var testWidth = metrics.width;
+			if (testWidth > maxWidth) {
+				ctx.fillText(line, x, y);
+				if (n < words.length - 1) {
+					line = words[n] + ' ';
+					y += lineHeight;
+				}
+			}
+			else {
+				line = testLine;
+			}
+		}
+		ctx.fillStyle = textColor.value;
+		ctx.fillText(line, x, y);
+	}
+	// let fgraScale=(pixels)=>{
+	// 		for (let j = 0; j < pixels.data.length; j += 4) {
+	// 		let r  = pixels.data[j];
+	// 		let g  = pixels.data[j + 1];
+	// 		let b  = pixels.data[j + 2];
+	// 		var v = 0.2126 * r*grascale.value + 0.7152 * g * grascale.value  + 0.0722 *  b * grascale.value ;
+	// 			pixels.data[j] = pixels.data[j+1] = pixels.data[j+2] = v
+	// 	}
+
+	// 	return pixels
+	// }
+    function paintToCanvas() {
+      let width = video.videoWidth;
+      let height = video.videoHeight;
+      canvas.width = width;
+			canvas.height = height;
+
+      setInterval(() => {
+				ctx.drawImage(video, 0, 0, width, height);
+				//adjustment setting
+				canvas.style.filter = `blur(${blur.value}px)contrast(${contrast.value}%)hue-rotate(${hueRotate.value}deg)grayscale(${grascale.value}%)invert(${invert.value}%)opacity(${100-opacity.value}%)sepia(${sepia.value}%)brightness(${brightness.value}%)saturate(${saturation.value}%)`
+
+
+
+
+
+
+        //take pixel data out
+        let pixels = ctx.getImageData(0, 0, width, height);
+        // play with it
+        ctx.globalAlpha = 1;
+				pixels = filter(pixels)
+				// pixels =
+        // put pixel data back
+				ctx.putImageData(pixels, 0, 0);
+				ctx.font = `${fontsize.value}px Georgia`;
+				wrapText(textarea.value, 10, 50, canvas.width, fontsize.value)
+
+
+				// console.log(textColor.value)
+      }, 16);
+    }
+    let fchangeRGB = (pixels) =>{
+      for (let j = 0; j < pixels.data.length; j += 4) {
+        pixels.data[j] = pixels.data[j] + 100;
+        pixels.data[j + 1] = pixels.data[j + 1] + 100;
+        pixels.data[j + 2] = pixels.data[j + 2] * 50;
+      }
+      return pixels;
+    }
+
+
+
+    let fgreenScreen=(pixels)=>{
+      let dataArr = [];
+        document.querySelectorAll(".rgb input").forEach(x => {
+        // console.log(x);
+        dataArr.push(x.value);});
+
+
+        for (let j = 0; j < pixels.data.length; j += 4) {
+
+          if (pixels.data[j] >= dataArr[0] && pixels.data[j] <= dataArr[1]
+          && pixels.data[j + 1] >= dataArr[2] && pixels.data[j + 1] <= dataArr[3]
+          && pixels.data[j + 2] >= dataArr[4] && pixels.data[j + 1] <= dataArr[5]
+          ){
+          pixels.data[j + 3]= 0;
+        }
+    }
+    return pixels;
+
+
+    }
+
+
+    function takePhoto() {
+console.log("cheese")
+      //canvas -->url
+      let data = canvas.toDataURL("beauty/jpeg");
+      //create element
+      let link = document.createElement("a");
+      //href
+      link.href = data;
+      //attribute setting
+      link.setAttribute("download", "beauty");
+
+      //text inside
+      // link.textContent="Download Image";
+      link.innerHTML = `<img class="shot" src="${data}" alt = "pics">`
+      //place it!
+      gallery.insertBefore(link, gallery.firstChild);
+    }
+    getVideo();
+
+    video.addEventListener("canplay", paintToCanvas);
+
+
+  </script>
+</body>
+
+</html>
