@@ -11,45 +11,54 @@
   <div class="photobooth">
     <div class="control">
       <div class="rgb">
+				<h3>Filter</h3>
+					<button id="greenScreen">greenScreen</button><br>
         <input type="range" min="0" max="255" value="128" id="rmin">
-        <label for="rmin">RED min</label>
+				<label for="rmin">RED min</label>
+				<br>
         <input type="range" min="0" max="255" value="128" id="rmax">
         <label for="rmax">RED max</label>
         <br>
         <input type="range" min="0" max="255" value="128" id="gmin">
-        <label for="gmin">GREEN min</label>
+				<label for="gmin">GREEN min</label>
+				<br>
         <input type="range" min="0" max="255" value="128" id="gmax">
         <label for="gmax">GREEN max</label>
         <br>
         <input type="range" min="0" max="255" value="128" id="bmin">
-        <label for="bmin">BLUE min</label>
+				<label for="bmin">BLUE min</label>
+				<br>
         <input type="range" min="0" max="255" value="128" id="bmax">
 				<label for="bmax">BLUE max</label>
 				<br>
 
 			</div>
 			<div class= "filter">
-				<button id="changeRGB">changeRGB</button>
-				<button id="shiftRGB">shiftRGB</button>
-				<button id="greenScreen">greenScreen</button>
-
+				<button id="changeRGB">changeRGB</button><br>
+				<button id="shiftRGB">shiftRGB</button><br>
 			</div>
 			<div class= "adjust">
 				<input type="range" min="0" max="20" value="0" id="blur">
 				<label for="blur">Blur</label>
+				<br>
 				<input type="range" min="0" max="700" value="200" id="brightness">
 				<label for="brightness">Brightness</label>
+							<br>
 				<input type="range" min="0" max="755" value="128" id="contrast">
 				<label for="contrast">Contrast</label>
+				<br>
 				<input type="range" min="0" max="955" value="128" id="saturation">
 				<label for="saturation">Saturation</label>
 					<br>
 				<input type="range" min="0" max="90" value="0" id="opacity">
 				<label for="opacity">Fade</label>
+				<br>
 				<input type="range" min="0" max="100" value="0" id="grascale">
 				<label for="grascale">GrayScale</label>
+							<br>
 				<input type="range" min="0" max="360" value="0" id="hueRotate">
 				<label for="hueRotate">Hue</label>
+				<br>
 				<input type="range" min="0" max="100" value="0" id="invert">
 				<label for="invert">Invert</label>
 					<br>
@@ -62,20 +71,31 @@
 
 			<div class= "text">
 				<h3>Text</h3>
-				<textarea id="textarea" rows="4" cols="90"value="say something!">say something!</textarea><br>
+				<textarea id="textarea" rows="4" cols="20"value="say something!">say something!</textarea><br>
 				<input type="range" min="10" max="160" value="20" id="fontsize">
 				<label for="fontsize">fontsize</label>
 					<div id="color-session">
-						<h3>Text Color</h3>
+						<div>Text Color</div>
 						<input type="color" id="textColor" value="#ffffff">
 					</div>
 			</div>
-			<button id="save_pic" onclick="takePhoto()">Take a pic</button>
-			<button id="save_canvas">Start Rendering Mp4 & Webm</button>
+			<div class="export">
+				<h3>Export</h3>
+			<button id="save_pic" onclick="takePhoto()">Take a pic</button><br>
+			<button id="save_canvas">Start Record</button>
+			</div>
 		</div>
 		<div class="display">
-    <video class="video" height="0px"></video>
+		<video class="video" height="0px"></video>
 		<canvas class="canvas"></canvas>
+		<canvas class="canvas1"></canvas>
+		<canvas class="canvas2"></canvas>
+		<canvas class="canvas3"></canvas>
+		<canvas class="canvas4"></canvas>
+		<canvas class="canvas5"></canvas>
+		<canvas class="canvas6"></canvas>
+		<canvas class="canvas7"></canvas>
+		<canvas class="canvas8"></canvas>
 		</div>
   </div>
 	<div class="gallery"></div>
@@ -89,8 +109,24 @@
 
   <script>
     let video = document.querySelector(".video");
-    let canvas = document.querySelector(".canvas");
-    const ctx = canvas.getContext('2d');
+		let canvas = document.querySelector(".canvas");
+		let canvas1 = document.querySelector(".canvas1");
+		let canvas2 = document.querySelector(".canvas2");
+		let canvas3 = document.querySelector(".canvas3");
+		let canvas4 = document.querySelector(".canvas4");
+		let canvas5 = document.querySelector(".canvas5");
+		let canvas6 = document.querySelector(".canvas6");
+		let canvas7 = document.querySelector(".canvas7");
+		let canvas8 = document.querySelector(".canvas8");
+		const ctx = canvas.getContext('2d');
+		const ctx1 = canvas1.getContext('2d');
+		const ctx2 = canvas2.getContext('2d');
+		const ctx3 = canvas3.getContext('2d');
+		const ctx4 = canvas4.getContext('2d');
+		const ctx5 = canvas5.getContext('2d');
+		const ctx6 = canvas6.getContext('2d');
+		const ctx7 = canvas7.getContext('2d');
+		const ctx8 = canvas8.getContext('2d');
 		let gallery = document.querySelector(".gallery");
 		let changeRGB = document.getElementById("changeRGB");
 		let shiftRGB = document.getElementById("shiftRGB");
@@ -104,8 +140,23 @@
 		let hueRotate = document.getElementById("hueRotate")
 		let invert = document.getElementById("invert")
 		let sepia = document.getElementById("sepia")
+		let generateStyle = ()=>{
+				return{
+					"blur": `${Math.random() * 20}`,
+					"hueRotate": `${Math.floor((Math.random() * 360))}`,
+					"grascale": `${Math.random() * 10}`,
+					"brightness": `${Math.random() * 400+200}`,
+					"saturate": `${Math.random() * 20+50}`}
 
-
+		}
+			let canvas1Style = generateStyle();
+			let canvas2Style = generateStyle();
+			let canvas3Style = generateStyle();
+			let canvas4Style = generateStyle();
+			let canvas5Style = generateStyle();
+			let canvas6Style = generateStyle();
+			let canvas7Style = generateStyle();
+			let canvas8Style = generateStyle();
 
 
 		let textarea = document.getElementById("textarea");
@@ -175,36 +226,87 @@
 	// 	return pixels
 	// }
     function paintToCanvas() {
-      let width = video.videoWidth;
-      let height = video.videoHeight;
+     // let width = video.videoWidth;
+			// let height = video.videoHeight;
+			let width  = 400
+			let height = 300
       canvas.width = width;
 			canvas.height = height;
+			canvas1.width =  width;
+			canvas1.height = height;
+			canvas2.width = width;
+			canvas2.height = height;
+			canvas3.width = width;
+			canvas3.height = height;
+			canvas4.width = width;
+			canvas4.height = height;
+			canvas5.width = width;
+			canvas5.height = height;
+			canvas6.width = width;
+			canvas6.height = height;
+			canvas7.width = width;
+			canvas7.height = height;
+			canvas8.width = width;
+			canvas8.height = height;
 
       setInterval(() => {
 				ctx.drawImage(video, 0, 0, width, height);
+				ctx1.drawImage(video, 0, 0, width , height );
+				ctx2.drawImage(video, 0, 0, width , height );
+				ctx3.drawImage(video, 0, 0, width, height);
+				ctx4.drawImage(video, 0, 0, width, height);
+				ctx5.drawImage(video, 0, 0, width, height);
 				//adjustment setting
+				//  if (canvas1Style && canvas2Style) {
 				canvas.style.filter = `blur(${blur.value}px)contrast(${contrast.value}%)hue-rotate(${hueRotate.value}deg)grayscale(${grascale.value}%)invert(${invert.value}%)opacity(${100-opacity.value}%)sepia(${sepia.value}%)brightness(${brightness.value}%)saturate(${saturation.value}%)`
+				canvas1.style.filter = `blur(${canvas1Style.blur}px)hue-rotate(${canvas1Style.hueRotate}deg)grayscale(${canvas1Style.grascale}%)saturate(${canvas1Style.saturate}%)brightness(${canvas1Style.brightness}%)`
+				canvas2.style.filter = `blur(${canvas2Style.blur}px)hue-rotate(${canvas2Style.hueRotate}deg)grayscale(${canvas2Style.grascale}%)saturate(${canvas2Style.saturate}%)brightness(${canvas1Style.brightness}%)`
+				canvas3.style.filter = `blur(${canvas3Style.blur}px)hue-rotate(${canvas3Style.hueRotate}deg)grayscale(${canvas3Style.grascale}%)saturate(${canvas3Style.saturate}%)brightness(${canvas3Style.brightness}%)`
+				canvas4.style.filter = `blur(${canvas4Style.blur}px)hue-rotate(${canvas4Style.hueRotate}deg)grayscale(${canvas4Style.grascale}%)saturate(${canvas4Style.saturate}%)brightness(${canvas4Style.brightness}%)`
+				canvas5.style.filter = `blur(${canvas5Style.blur}px)hue-rotate(${canvas5Style.hueRotate}deg)grayscale(${canvas5Style.grascale}%)saturate(${canvas5Style.saturate}%)brightness(${canvas5Style.brightness}%)`
+				canvas6.style.filter = `blur(${canvas6Style.blur}px)hue-rotate(${canvas6Style.hueRotate}deg)grayscale(${canvas6Style.grascale}%)saturate(${canvas6Style.saturate}%)brightness(${canvas6Style.brightness}%)`
+				canvas7.style.filter = `blur(${canvas7Style.blur}px)hue-rotate(${canvas7Style.hueRotate}deg)grayscale(${canvas7Style.grascale}%)saturate(${canvas7Style.saturate}%)brightness(${canvas7Style.brightness}%)`
+				canvas8.style.filter = `blur(${canvas8Style.blur}px)hue-rotate(${canvas8Style.hueRotate}deg)grayscale(${canvas8Style.grascale}%)saturate(${canvas8Style.saturate}%)brightness(${canvas8Style.brightness}%)`
 
-
-
-
-
-
+				//  }
         //take pixel data out
-        let pixels = ctx.getImageData(0, 0, width, height);
+				let pixels = ctx.getImageData(0, 0, width, height);
+				let pixels1 = ctx1.getImageData(0, 0, width, height);
+				let pixels2 = ctx2.getImageData(0, 0, width, height);
+				let pixels3 = ctx1.getImageData(0, 0, width, height);
+				let pixels4 = ctx2.getImageData(0, 0, width, height);
+				let pixels5 = ctx2.getImageData(0, 0, width, height);
+				let pixels6 = ctx1.getImageData(0, 0, width, height);
+				let pixels7 = ctx2.getImageData(0, 0, width, height);
+				let pixels8 = ctx2.getImageData(0, 0, width, height);
         // play with it
         ctx.globalAlpha = 1;
 				pixels = filter(pixels)
+				pixels1 = filter(pixels1)
+				pixels2 = filter(pixels2)
+				pixels3 = filter(pixels3)
+				pixels4 = filter(pixels4)
+				pixels5 = filter(pixels5)
+				pixels6 = filter(pixels6)
+				pixels7 = filter(pixels7)
+				pixels8 = filter(pixels8)
 				// pixels =
         // put pixel data back
 				ctx.putImageData(pixels, 0, 0);
+				ctx1.putImageData(pixels1, 0, 0);
+				ctx2.putImageData(pixels2, 0, 0);
+				ctx3.putImageData(pixels3, 0, 0);
+				ctx4.putImageData(pixels4, 0, 0);
+				ctx5.putImageData(pixels5, 0, 0);
+				ctx6.putImageData(pixels6, 0, 0);
+				ctx7.putImageData(pixels7, 0, 0);
+				ctx8.putImageData(pixels8, 0, 0);
 				ctx.font = `${fontsize.value}px Georgia`;
 				wrapText(textarea.value, 10, 50, canvas.width, fontsize.value)
-
-
-				// console.log(textColor.value)
       }, 16);
-    }
+		}
+
+
     let fchangeRGB = (pixels) =>{
       for (let j = 0; j < pixels.data.length; j += 4) {
         pixels.data[j] = pixels.data[j] + 100;
